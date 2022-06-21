@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "768813693004",
+    "project_id": "beatscodefinalproject",
+    "storage_bucket": "beatscodefinalproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768813693004:android:0f73fd48c238fdd3d61ce9",
+        "android_client_info": {
+          "package_name": "com.dev6andre.beatscode_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768813693004-rngd3001ghfgsmociv7j6bq07sji53sm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiJtMW9vmeQLVWJpsJgeKCpYgp_Mptj30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768813693004-rngd3001ghfgsmociv7j6bq07sji53sm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "768813693004-uknv4quoc5lfldfka9mdei51uih7klbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dev6andre.beatscodeProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
