@@ -1,5 +1,3 @@
-# beatscode_project
-
 <h1 align="center">
 <img width="450"alt="The Lounge"	src="https://cdn.dribbble.com/users/12198047/screenshots/18547489/media/0dbdb8c9f259d3650d8167729ce39650.png">
 </h1>
