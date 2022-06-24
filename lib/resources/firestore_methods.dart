@@ -42,4 +42,27 @@ class FirestoreMethods {
     }
     return res;
   }
+
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      /*If the icon doesn't contain our id we dislike */
+      /*This part ensure that thee likes array doesn't contain the uid, if we
+      * have an uid then remove otherwise add it*/
+      if (likes.contains(uid)) {
+        await _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
+      }
+      /*If the icon does contain our id we like */
+      else {
+        await _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+      }
+    } catch (e) {
+      print(
+        e.toString(),
+      );
+    }
+  }
 }

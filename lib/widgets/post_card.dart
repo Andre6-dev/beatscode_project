@@ -1,14 +1,28 @@
+import 'package:beatscode_project/providers/user_provider.dart';
+import 'package:beatscode_project/resources/firestore_methods.dart';
 import 'package:beatscode_project/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class PostCard extends StatelessWidget {
+import '../models/user.dart';
+import 'like_animation.dart';
+
+class PostCard extends StatefulWidget {
   /*Adding the argument snap to render every post that we have*/
   final snap;
   const PostCard({Key? key, required this.snap}) : super(key: key);
 
   @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool isLikeAnimating = false;
+
+  @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(
@@ -29,7 +43,7 @@ class PostCard extends StatelessWidget {
                   radius: 16,
                   backgroundImage: NetworkImage(
                     /*Showing our image from Firebase using snapshot*/
-                    snap['profImage'],
+                    widget.snap['profImage'],
                   ),
                 ),
                 Expanded(
@@ -43,7 +57,7 @@ class PostCard extends StatelessWidget {
                       children: [
                         Text(
                           /*Passing the username from Firebase*/
-                          snap['username'],
+                          widget.snap['username'],
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -90,24 +104,92 @@ class PostCard extends StatelessWidget {
 
           /* SizedBox is a simple box with a specified size, this widget allow us
           to have our post image below the username*/
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: double.infinity,
-            child: Image.network(
-              snap['postUrl'],
-              fit: BoxFit.cover,
+          /*We need to create a stack because we need the animation in the top
+          * of the photo*/
+          GestureDetector(
+            /*This part takes the likePost method and add a like to our
+            collections through the likes field*/
+            onDoubleTap: () async {
+              await FirestoreMethods().likePost(
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['likes'],
+              );
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: double.infinity,
+                  child: Image.network(
+                    widget.snap['postUrl'],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                /*Controlls the opacity of the hearth in the picture*/
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isLikeAnimating
+                      ? 1
+                      : 0, // it controls the opacity when you tapped the photo
+                  child: LikeAnimation(
+                    child: const Icon(
+                      Icons.favorite,
+                      color: Colors.redAccent,
+                      size: 120,
+                    ),
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(
+                      milliseconds: 400,
+                    ),
+                    /*This option provide us that when the animation have been
+                    * completed it should disappear*/
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                  ),
+                )
+              ],
             ),
           ),
 
+          // LIKE COMMENT SECTION
           /*The row contains like, comment, share and bookmark icons;
           these icons are located below the main photo.*/
           Row(
             children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
+              LikeAnimation(
+                isAnimating: widget.snap['likes'].contains(user.uid),
+                smallLike: true,
+                child: IconButton(
+                  /*This method add or remove uid inside likes array, so when
+                  * you pressed the like button this operation is going to start*/
+                  onPressed: () async {
+                    await FirestoreMethods().likePost(
+                      widget.snap['postId'],
+                      user.uid,
+                      widget.snap['likes'],
+                    );
+                    setState(() {
+                      isLikeAnimating = true;
+                    });
+                  },
+                  /*If the array have one element will be red, otherwise it will
+                  * be grey */
+                  icon: widget.snap['likes'].contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : const Icon(
+                          Icons.favorite_border,
+                        ),
                 ),
               ),
               IconButton(
@@ -149,7 +231,7 @@ class PostCard extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                   child: Text(
-                    '${snap['likes'].length} likes',
+                    '${widget.snap['likes'].length} likes',
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -163,13 +245,13 @@ class PostCard extends StatelessWidget {
                       style: const TextStyle(color: primaryColor),
                       children: [
                         TextSpan(
-                          text: snap['username'],
+                          text: widget.snap['username'],
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         TextSpan(
-                          text: ' ${snap['description']}',
+                          text: ' ${widget.snap['description']}',
                         ),
                       ],
                     ),
@@ -197,7 +279,7 @@ class PostCard extends StatelessWidget {
                   child: Text(
                     /*Using intl to format Date*/
                     DateFormat.yMMMd().format(
-                      snap['datePublished'].toDate(),
+                      widget.snap['datePublished'].toDate(),
                     ),
                     style: TextStyle(
                       fontSize: 11,
