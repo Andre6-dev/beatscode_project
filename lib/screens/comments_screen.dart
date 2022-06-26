@@ -1,6 +1,7 @@
 import 'package:beatscode_project/resources/firestore_methods.dart';
 import 'package:beatscode_project/utils/colors.dart';
 import 'package:beatscode_project/widgets/comment_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:beatscode_project/models/user.dart' as model;
 import 'package:beatscode_project/providers/user_provider.dart';
@@ -42,7 +43,27 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
 
             /*COMMENTS*/
-            body: CommentCard(),
+            /*We have a Stream builder because we need to have our comments throughout a stream*/
+            body: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('posts')
+                  .doc(widget.snap['postId'])
+                  .collection('comments')
+                  .orderBy('datePublished', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: (snapshot.data! as dynamic).docs.length,
+                  itemBuilder: (context, index) => CommentCard(
+                      snap: (snapshot.data! as dynamic).docs[index].data()),
+                );
+              }, // Load comments from Firestore
+            ),
 
             /*COMMENT ZONE*/
             bottomNavigationBar: SafeArea(
@@ -61,7 +82,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     /*AVATAR*/
                     CircleAvatar(
                       backgroundImage: NetworkImage(
-                        'https://images.squarespace-cdn.com/content/v1/51b3dc8ee4b051b96ceb10de/1401467111255-TM3V8CHFU2O92OGASHQO/tumblr_n6adpeNPvI1qg8i80o3_1280.jpg',
+                        user.photoUrl,
                       ),
                       radius: 18,
                     ),
@@ -72,7 +93,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         child: TextField(
                           controller: _commentController,
                           decoration: InputDecoration(
-                            hintText: 'Comment as username',
+                            hintText: 'Comment as ${user.username}',
                             border: InputBorder.none,
                           ),
                         ),
@@ -88,6 +109,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           user.username,
                           user.photoUrl,
                         );
+
+                        /*Clear the text field after the button is pressed.*/
+                        setState(() {
+                          _commentController.text = "";
+                        });
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
