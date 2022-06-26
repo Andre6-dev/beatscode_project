@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class StorageMethods {
-  // creating an instancee from storage
+  // creating an instance from storage
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // adding an image to firebase storage
   Future<String> uploadImageToStorage(
       String childName, Uint8List file, bool isPost) async {
     Reference ref =
@@ -27,6 +28,4 @@ class StorageMethods {
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
-  // adding an image to firebase storage
-
 }

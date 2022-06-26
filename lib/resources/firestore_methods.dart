@@ -3,10 +3,12 @@ import 'dart:typed_data';
 import 'package:beatscode_project/models/post.dart';
 import 'package:beatscode_project/resources/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   /*Upload a post*/
   Future<String> uploadPost(
     String description,
@@ -91,6 +93,17 @@ class FirestoreMethods {
       print(
         e.toString(),
       );
+    }
+  }
+
+  /*DELETING A POST*/
+  Future<void> deletePost(String postId, String postUrl) async {
+    try {
+      await _firestore.collection('posts').doc(postId).delete();
+      // Function to remove our image with the post
+      await _storage.ref().child('posts').child(postUrl).delete();
+    } catch (err) {
+      print(err.toString());
     }
   }
 }
