@@ -7,7 +7,7 @@ class UserProvider with ChangeNotifier {
   User? _user;
   final AuthMethods _authMethods = AuthMethods();
 
-  User get getUser => _user!;
+  User? get getUser => _user;
 
   // update the value of an user
   Future<void> refreshUser() async {
