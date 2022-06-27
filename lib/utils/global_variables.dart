@@ -3,6 +3,8 @@ import 'package:beatscode_project/screens/feed_screen.dart';
 import 'package:beatscode_project/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/profile_screen.dart';
+
 const webScreenSize = 600;
 
 const homeScreenItems = [
@@ -10,6 +12,6 @@ const homeScreenItems = [
   FeedScreen(),
   SearchScreen(),
   AddPostScreen(),
-  Text('notif'),
-  Text('profile'),
+  Text('music'),
+  ProfileScreen(),
 ];
