@@ -1,3 +1,4 @@
+import 'package:beatscode_project/screens/profile_screen.dart';
 import 'package:beatscode_project/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,20 @@ class _SearchScreenState extends State<SearchScreen> {
   bool isShowUsers = false;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    searchController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       /*INPUT FIELD TO SEARCH USERS*/
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         title: TextFormField(
+          controller: searchController,
           decoration: const InputDecoration(
             labelText: 'Search for a User',
           ),
@@ -47,19 +56,33 @@ class _SearchScreenState extends State<SearchScreen> {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
 
                 return ListView.builder(
                   itemCount: (snapshot.data! as dynamic).docs.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          (snapshot.data! as dynamic).docs[index]['photoUrl'],
+                    return InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            uid: (snapshot.data! as dynamic).docs[index]['uid'],
+                          ),
                         ),
                       ),
-                      title: Text(
-                        (snapshot.data! as dynamic).docs[index]['username'],
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            (snapshot.data! as dynamic).docs[index]['photoUrl'],
+                          ),
+                        ),
+                        title: Text(
+                          (snapshot.data! as dynamic).docs[index]['username'],
+                        ),
                       ),
                     );
                   },
