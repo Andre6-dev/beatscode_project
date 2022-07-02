@@ -3,6 +3,7 @@ import 'package:beatscode_project/widgets/post_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:line_icons/line_icons.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({Key? key}) : super(key: key);
@@ -14,16 +15,17 @@ class FeedScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         centerTitle: false,
-        title: SvgPicture.asset(
-          'assets/ic_instagram.svg',
-          color: primaryColor,
+        title: Image(
+          image: AssetImage('assets/logo_feed.png'),
           height: 32,
         ),
         actions: [
           IconButton(
             onPressed: () {},
             icon: const Icon(
-              Icons.messenger_outline,
+              LineIcons.phoenixFramework,
+              color: Colors.white,
+              size: 35,
             ),
           )
         ],
@@ -33,7 +35,10 @@ class FeedScreen extends StatelessWidget {
       * in real time */
       body: StreamBuilder(
         /*Our stream builder works based in your stream*/
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .orderBy('datePublished', descending: true)
+            .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

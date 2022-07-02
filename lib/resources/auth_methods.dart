@@ -5,6 +5,7 @@ import 'package:beatscode_project/resources/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthMethods {
   /// create an instance from FirebaseAuth
@@ -104,5 +105,7 @@ class AuthMethods {
 
   Future<void> signOut() async {
     await _auth.signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }

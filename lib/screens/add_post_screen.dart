@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:beatscode_project/resources/firestore_methods.dart';
 import 'package:beatscode_project/utils/colors.dart';
 import 'package:beatscode_project/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
@@ -44,7 +47,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
-        showSnackBar('Posted!', context);
+        var snackBar = SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Success!',
+            message: 'Your image has been upload successfully!',
+            contentType: ContentType.success,
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         clearImage();
       } else {
         setState(() {
@@ -64,6 +77,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         builder: (context) {
           return SimpleDialog(
             title: const Text('Create a Post'),
+            backgroundColor: mobileBackgroundColor,
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
@@ -127,9 +141,29 @@ class _AddPostScreenState extends State<AddPostScreen> {
           )
         : _file == null
             ? Center(
-                child: IconButton(
-                  icon: const Icon(Icons.upload),
-                  onPressed: () => _selectImage(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [
+                      0.5,
+                      0.8,
+                      1,
+                    ],
+                    colors: [
+                      Color(0xFF0A0A1E),
+                      Color(0xFF16399E),
+                      Color(0xFFB63FCA),
+                    ],
+                  )),
+                  child: Center(
+                    child: IconButton(
+                      iconSize: 45,
+                      icon: const Icon(LineIcons.alternateCloudUpload),
+                      onPressed: () => _selectImage(context),
+                    ),
+                  ),
                 ),
               )
             : Scaffold(
@@ -162,7 +196,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 body: Column(
                   children: [
                     _isLoading
-                        ? const LinearProgressIndicator()
+                        ? LiquidLinearProgressIndicator(
+                            value: 0.25,
+                            valueColor: AlwaysStoppedAnimation(Colors.pink),
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.red,
+                            borderWidth: 5.0,
+                            borderRadius: 12.0,
+                            direction: Axis.vertical,
+                            center: Text("Loading..."),
+                          )
                         : const Padding(
                             padding: EdgeInsets.only(top: 0),
                           ),

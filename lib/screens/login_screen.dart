@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ), // adding space margin from bottom
               // svg image
               SvgPicture.asset(
-                "assets/ic_instagram.svg",
+                "assets/logo_feed.png",
                 color: primaryColor,
                 height: 64,
               ),
