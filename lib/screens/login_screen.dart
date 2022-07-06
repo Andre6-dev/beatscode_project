@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ), // adding space margin from bottom
               // svg image
               SvgPicture.asset(
-                "assets/logo_feed.png",
+                "assets/Logo_final_beatscode.svg",
                 color: primaryColor,
                 height: 64,
               ),

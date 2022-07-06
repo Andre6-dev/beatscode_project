@@ -97,7 +97,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ), // adding space margin from bottom
               // svg image
               SvgPicture.asset(
-                "assets/ic_instagram.svg",
+                "assets/Logo_final_beatscode.svg",
                 color: primaryColor,
                 height: 64,
               ),
